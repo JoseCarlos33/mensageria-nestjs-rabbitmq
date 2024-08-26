@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: order_management
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    image: node:18
+    container_name: nestjs-app-producer
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://postgres:password@postgres:5432/order_management
+      NODE_ENV: development
+    command: npm run start:dev
+
+volumes:
+  postgres_data:
