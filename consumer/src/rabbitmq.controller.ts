@@ -13,8 +13,10 @@ export class RabbitMQController {
   constructor(private readonly rabbitMQService: RabbitMQService) {}
 
   @EventPattern('order-placed')
-  handleOrderPlaced(@Payload() order: any) {
-    return this.rabbitMQService.handleOrderPlaced(order);
+  async handleOrderPlaced(@Payload() order: any) {
+    const response = await this.rabbitMQService.handleOrderPlaced(order);
+
+    return response;
   }
 
   @MessagePattern({ cmd: 'fetch-orders' })
