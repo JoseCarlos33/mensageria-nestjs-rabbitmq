@@ -1,34 +1,25 @@
-version: '3.8'
+version: '3'
 services:
-  postgres:
-    image: postgres:13
-    container_name: postgres
+  rabbitmq:
+    image: rabbitmq:3-management
     ports:
-      - "5432:5432"
+      - "15672:15672"
+      - "5672:5672"
+    container_name: rabbitmq
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: order_management
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: password
 
   app:
-    image: node:18
-    container_name: nestjs-app-producer
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/app
-      - /app/node_modules
+    build: .
     ports:
-      - "3001:3001"
+      - "3000:3000"
+    container_name: nestjs-app
     depends_on:
-      - postgres
+      - rabbitmq
     environment:
-      DATABASE_URL: postgres://postgres:password@postgres:5432/order_management
-      NODE_ENV: development
+      DATABASE_URL: "file:./dev.db"
+      RABBITMQ_URL: "amqp://rabbitmq:5672"
+    volumes:
+      - .:/usr/src/app
     command: npm run start:dev
-
-volumes:
-  postgres_data:

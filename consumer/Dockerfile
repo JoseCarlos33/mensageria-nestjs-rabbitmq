@@ -12,9 +12,5 @@ RUN npm install
 # Copy the rest of the application code to the working directory
 COPY . .
 
-# Build the application
-RUN npx prisma generate
-RUN npm run build
-
 # Define the command to run the application
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start:dev"]

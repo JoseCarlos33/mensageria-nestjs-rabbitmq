@@ -11,15 +11,24 @@ export class OrdersService {
     @Inject('ORDERS_SERVICE') private rabbitClient: ClientProxy,
   ) {}
 
-  async createOrder(createOrderDto: CreateOrderDto): Promise<Order> {
-    this.rabbitClient.emit('order-placed', createOrderDto);
-
-    return this.prisma.order.create({
+  async createOrder(createOrderDto: CreateOrderDto): Promise<Order | null> {
+    const response = this.prisma.order.create({
       data: createOrderDto,
     });
+
+    console.log('Order created:', response);
+    if (response) {
+      this.rabbitClient.emit('order-placed', createOrderDto);
+      return response;
+    }
+
+    return null;
   }
 
-  async updateOrderStatus(id: string, status: string): Promise<Order> {
+  async updateOrderStatus(
+    id: string,
+    status: 'PENDING' | 'PENDING' | 'COMPLETED' | 'CANCELLED',
+  ): Promise<Order> {
     return this.prisma.order.update({
       where: { id },
       data: { status },
