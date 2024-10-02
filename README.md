@@ -10,14 +10,17 @@ Este projeto consiste em um sistema de mensageria assíncrona utilizando **NestJ
 
 ```bash
 ├── producer/
-│   └── src/
+│   └── src/ 
 │       └── order/
-│           └── order.controller.ts  # Rota para receber updates do consumer
-│   └── package.json                 # Dependências e scripts do producer
+│           └── dto/
+│           └── entities/
+│           └── order.controller.ts  # Rota para receber updates do consumer e client 
+│           └── order.service.ts
+│           └── order.module.ts
 ├── consumer/
 │   └── src/
-│       └── order/
-│           └── order.processor.ts   # Processamento das ordens recebidas
+│       └── rabbitmq.controller.ts   # REcebimento de order
+│       └── rabbitmq.service.ts   # Processamento das ordens recebidas
 │   └── package.json                 # Dependências e scripts do consumer
 │   └── Dockerfile                   # Dockerfile para configurar o RabbitMQ
 │   └── docker-compose.yml           # Configuração do RabbitMQ com Docker
@@ -92,6 +95,15 @@ O projeto é composto de duas aplicações separadas:
 
 ### Producer
 
+- **POST /order/**: Cria uma order e envia para processamento
+  - Exemplo de Payload:
+    ```json
+      {
+         "customerId": "1",
+         "totalAmount": 200.00,
+         "status": "PENDING"
+      }
+    ```
 - **PATCH /order/:id**: Atualiza o status de uma order processada.
   - Exemplo de Payload:
     ```json
@@ -111,26 +123,3 @@ O projeto é composto de duas aplicações separadas:
   ```bash
   npm run start:docker-dev
   ```
-
-## 🏗️ Como Contribuir
-
-1. Faça um fork do repositório.
-2. Crie uma nova branch:
-   ```bash
-   git checkout -b feature/nova-feature
-   ```
-3. Faça as alterações e commit:
-   ```bash
-   git commit -m "Adiciona nova feature"
-   ```
-4. Faça o push para a branch:
-   ```bash
-   git push origin feature/nova-feature
-   ```
-5. Abra um Pull Request!
-
----
-
-## 📜 Licença
-
-Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
