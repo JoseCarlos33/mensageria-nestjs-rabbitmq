@@ -9,9 +9,8 @@ export class RabbitMQService {
     console.log(order);
 
     setTimeout(() => {
-      fetch('http://localhost:3000/orders/order-processed', {
+      fetch(`http://localhost:3000/orders/order-processed/${order.id}`, {
         body: JSON.stringify({
-          orderId: order.id,
           status: 'COMPLETED',
         }),
         headers: {
