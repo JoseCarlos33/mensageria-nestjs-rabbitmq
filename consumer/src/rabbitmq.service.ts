@@ -19,7 +19,7 @@ export class RabbitMQService {
         },
         method: 'PATCH',
       });
-    }, 2000);
+    }, 3000);
     return true;
   }
 }

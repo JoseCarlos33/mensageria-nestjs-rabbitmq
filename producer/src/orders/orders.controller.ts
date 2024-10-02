@@ -1,4 +1,4 @@
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { Payload } from '@nestjs/microservices';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrdersService } from './orders.service';
 import { Body, Controller, Get, Patch, Post, Res } from '@nestjs/common';
@@ -21,9 +21,7 @@ export class OrdersController {
 
   @Patch('/order-processed')
   async handleOrderProcessed(@Payload() data: any) {
-    console.log(
-      `Order ${data.orderId} was processed with status ${data.status}`,
-    );
+    return this.orderService.handleOrderProcessed(data);
   }
 
   @Get()

@@ -13,10 +13,20 @@ export class OrdersService {
   async createOrder(createOrderDto: CreateOrderDto): Promise<any | null> {
     const order = await this.prisma.order.create({ data: createOrderDto });
     if (order) {
-      const rabbitMQResponse = this.rabbitClient.emit('order-placed', order);
-      return { order, rabbitMQResponse };
+      this.rabbitClient.emit('order-placed', order);
+      return { order };
     }
     return null;
+  }
+
+  async handleOrderProcessed(data: {
+    orderId: string;
+    status: 'PENDING' | 'PENDING' | 'COMPLETED' | 'CANCELLED';
+  }): Promise<Order> {
+    return this.prisma.order.update({
+      where: { id: data.orderId },
+      data: { status: data.status },
+    });
   }
 
   async updateOrderStatus(
